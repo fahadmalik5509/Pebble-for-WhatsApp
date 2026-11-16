@@ -1,0 +1,47 @@
+/* ============================================================
+   Chat-list previews & snippets (sidebar + dialogs).
+   Targets the message snippet child inside cell-frame-secondary,
+   strictly excluding the status/badge gridcell (unread counter badge,
+   muted bell icon, pin icon, etc.).
+   ============================================================ */
+
+html:not(.wab-off-previews)
+  [data-testid="cell-frame-secondary"]
+  > :first-child:not([role="gridcell"]) {
+  filter: blur(calc(var(--wab-blur) * var(--wab-reveal)));
+  transition: filter var(--wab-duration) var(--wab-delay);
+}
+
+/* Do not force overflow: visible on snippets. WhatsApp's own ellipsis and
+   row clipping must win; otherwise long previews stop truncating and the
+   blur halo paints outside the rounded row. */
+
+/* Status rows and viewer headers reuse cell-frame-secondary for a timestamp,
+   not a message snippet. A timestamp is not private content. */
+html:not(.wab-off-previews)
+  :is(
+    [data-testid="status-row-cell"],
+    [data-testid="media-viewer-modal"],
+    [data-testid="status-player-uie"]
+  )
+  [data-testid="cell-frame-secondary"]
+  > :first-child {
+  filter: none !important;
+}
+
+/* Message info uses cell-frame-secondary for date metadata, not a snippet. */
+html:not(.wab-off-previews)
+  [data-testid="drawer-right"]:has([data-testid="msg-container"])
+  [data-testid="cell-frame-secondary"]
+  > :first-child {
+  filter: none !important;
+}
+
+/* Calls use the secondary line for the call type (Missed / Incoming), not a
+   message snippet. Contact name and photo still blur. */
+html:not(.wab-off-previews)
+  [data-testid="calls-drawer"]
+  [data-testid="cell-frame-secondary"]
+  > :first-child {
+  filter: none !important;
+}

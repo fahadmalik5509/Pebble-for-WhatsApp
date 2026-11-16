@@ -1,0 +1,124 @@
+/* ============================================================
+   Photos & videos. Every surface shares one strength (--wab-blur)
+   and one reveal timing; each has its own leaf switch.
+     media_photos    images and quoted photos in chat
+     media_videos    video and GIF previews, posters, round video notes
+     media_stickers  stickers
+     media_voice     voice notes and audio files
+     media_maps      shared location maps
+     media_viewer    info-panel gallery and the full-screen viewer
+   ============================================================ */
+
+html:not(.wab-off-media-photos) [data-testid="msg-container"] :is(
+  [data-testid~="image-placeholder"], [data-testid~="image-thumb"],
+  [data-testid~="quoted-message"]
+) :is(img, canvas) {
+  filter: blur(calc(var(--wab-blur) * var(--wab-reveal)));
+  transition: filter var(--wab-duration) var(--wab-delay);
+}
+
+/* Video posters and round video notes can be URL backgrounds without a video
+   element. Only paint leaves qualify; captions and controls stay crisp.
+   Documents, link cards and map descendants keep their existing owners. */
+html:not(.wab-off-media-videos) [data-testid="msg-container"] :is(
+  [data-testid~="video-content"], [data-testid~="image-thumb-gif"]
+) :is(img, canvas),
+html:not(.wab-off-media-videos) [data-testid="msg-container"] [style*="background-image"][style*="url("]:not(:has(*)):not(:where(
+  [data-testid~="document-thumb"], [data-testid~="document-thumb"] *,
+  [data-testid~="link-preview-container"], [data-testid~="link-preview-container"] *,
+  [data-testid~="shared_location_map_image"] *
+)),
+html:not(.wab-off-media-videos) [data-testid="msg-container"] video {
+  filter: blur(calc(var(--wab-blur) * var(--wab-reveal)));
+  transition: filter var(--wab-duration) var(--wab-delay);
+}
+
+html:not(.wab-off-media-stickers) [data-testid="msg-container"] [data-testid~="sticker-container"] :is(img, canvas) {
+  filter: blur(calc(var(--wab-blur) * var(--wab-reveal)));
+  transition: filter var(--wab-duration) var(--wab-delay);
+}
+
+html:not(.wab-off-media-maps) [data-testid="msg-container"] [data-testid="shared_location_map_image"] {
+  filter: blur(calc(var(--wab-blur) * var(--wab-reveal)));
+  transition: filter var(--wab-duration) var(--wab-delay);
+}
+
+/* --- Shared media gallery & viewer (individual items) ---
+   media-canvas wraps each individual thumbnail in both the drawer 4-grid
+   and the full gallery view. Viewer roots exclude header avatars and
+   toolbar controls. */
+html:not(.wab-off-media-viewer) [data-testid~="media-canvas-img"],
+html:not(.wab-off-media-viewer) [data-testid="media-canvas"] img:not([data-testid~="media-canvas-img"] img),
+html:not(.wab-off-media-viewer) [data-testid="media-viewer-modal"] :is(
+  [data-testid~="media-zoomable"], [data-testid~="media-image"],
+  [data-testid~="media-video"], [data-testid~="media-gif"]
+) :is(img, canvas),
+html:not(.wab-off-media-viewer) [data-testid="media-viewer-modal"] video,
+html:not(.wab-off-media-viewer) [data-testid="media-viewer-modal"] :is(
+  [data-testid~="media-zoomable"], [data-testid~="media-image"],
+  [data-testid~="media-video"], [data-testid~="media-gif"]
+) [style*="background-image"][style*="url("]:not(:has(*)) {
+  filter: blur(calc(var(--wab-blur) * var(--wab-reveal)));
+  transition: filter var(--wab-duration) var(--wab-delay);
+}
+
+/* In-chat stickers retain their natural non-circular geometry */
+[data-testid="msg-container"]
+  [data-testid="sticker-container"]
+  :is(img, canvas),
+[data-testid="msg-container"] img[alt*="Sticker" i] {
+  border-radius: 0 !important;
+}
+
+/* ---------- Voice notes and audio files ----------
+   WhatsApp Web puts no `audio` element or audio/ptt testid in the row. The
+   visual content is the play/pause button, the waveform slider, playback-speed
+   label and download button. Blur those leaves so the timestamp and bubble
+   geometry stay crisp. */
+html:not(.wab-off-media-voice)
+  [data-testid="msg-container"]
+  :is(
+    [aria-label="Voice message"],
+    [aria-label="Play voice message"],
+    [aria-label="Pause voice message"],
+    [aria-label="Download voice message"],
+    [aria-label="Voice note progress slider"],
+    [aria-label="Audio playback"],
+    button[aria-label^="Change playback speed"],
+    audio
+  ),
+html:not(.wab-off-media-voice)
+  [data-testid="msg-container"]:has(
+    :is([aria-label="Audio playback"], [aria-label="Voice note progress slider"])
+  )
+  div[aria-hidden="true"]:not(:empty) {
+  filter: blur(calc(var(--wab-blur) * var(--wab-reveal)));
+  transition: filter var(--wab-duration) var(--wab-delay);
+}
+
+/* ---------- Status media ----------
+   Status photos/videos have their own switch. The contact avatar is governed
+   by Profile photos, so only the status content wrappers are targeted. */
+html:not(.wab-off-media-status)
+  [data-testid="status-player-uie"]
+  :is(
+    [data-testid="status-image"],
+    [data-testid="status-image-thumbnail"],
+    [data-testid="media-url-provider"]
+  )
+  :is(img, video),
+html:not(.wab-off-media-status)
+  [data-testid="status-player-uie"]
+  :is(
+    [data-testid="status-image"],
+    [data-testid="status-image-thumbnail"],
+    [data-testid="media-url-provider"]
+  )
+  [style*="background-image"][style*="url("]:not(:has(*)),
+html:not(.wab-off-media-status)
+  [data-testid="status-row-cell"]
+  [data-testid="status-thumbnail"]
+  :is(img, [style*="background-image"][style*="url("]) {
+  filter: blur(calc(var(--wab-blur) * var(--wab-reveal)));
+  transition: filter var(--wab-duration) var(--wab-delay);
+}

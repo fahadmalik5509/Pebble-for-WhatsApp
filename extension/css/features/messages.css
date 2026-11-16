@@ -1,0 +1,89 @@
+/* ============================================================
+   Messages. One rule per surface, each keyed on its own leaf class
+   (html.wab-off-<leaf> lifts that surface only). Leaf text is blurred;
+   bubbles and wrappers keep their geometry.
+     messages_text     message text, captions, quoted replies, polls
+     messages_out      off = your own sent text stays readable
+     messages_senders  sender names in group chats
+     messages_cards    shared contact cards
+     messages_reply    the quote bar above the composer
+   ============================================================ */
+
+/* Message content rules are scoped to message containers, not to #main.
+   WhatsApp clones the same msg-container into the info drawer, forward
+   previews and other message surfaces; a clone must follow the same rules. */
+html:not(.wab-off-messages-text) [data-testid="msg-container"] [data-testid~="selectable-text"],
+html:not(.wab-off-messages-text) [data-testid="msg-container"] span.selectable-text,
+html:not(.wab-off-messages-text) [data-testid*="poll"] [data-testid~="selectable-text"] {
+  filter: blur(calc(var(--wab-blur) * var(--wab-reveal)));
+  transition: filter var(--wab-duration) var(--wab-delay);
+}
+
+html:not(.wab-off-messages-senders) span[data-testid="author"] {
+  filter: blur(calc(var(--wab-blur) * var(--wab-reveal)));
+  transition: filter var(--wab-duration) var(--wab-delay);
+}
+
+html:not(.wab-off-messages-cards) [data-testid*="contact-card"] [dir="auto"],
+html:not(.wab-off-messages-cards) [data-testid*="vcard"] [dir="auto"]:not([data-testid="msg-meta"] *) {
+  filter: blur(calc(var(--wab-blur) * var(--wab-reveal)));
+  transition: filter var(--wab-duration) var(--wab-delay);
+}
+
+/* The contact-card avatar can be a photo or a letter fallback in an SVG.
+   Blur the whole avatar, not only <img>, and keep the time stamp crisp. */
+html:not(.wab-off-messages-cards)
+  [data-testid*="vcard"]
+  :is(img, svg:has(foreignObject), svg:has(image)) {
+  filter: blur(calc(var(--wab-blur) * var(--wab-reveal)));
+  transition: filter var(--wab-duration) var(--wab-delay);
+}
+
+html:not(.wab-off-messages-reply) [data-testid="conversation-compose-box"] [data-testid*="quote"] [data-testid~="selectable-text"],
+html:not(.wab-off-messages-reply) [data-testid="conversation-compose-box"] [data-testid*="quote"] span[dir="auto"],
+html:not(.wab-off-messages-reply) [data-testid="quoted-message"] {
+  filter: blur(calc(var(--wab-blur) * var(--wab-reveal)));
+  transition: filter var(--wab-duration) var(--wab-delay);
+}
+
+/* Give the Gaussian halo room without opening an entire collapsed message.
+   The extra paint margin vanishes on reveal, preserving text truncation.
+   Wrappers, bubbles and quoted cards never receive a filter. */
+html:not(.wab-off-messages-text)
+  [data-testid="msg-container"]
+  :is(div, span):has(
+    > :is([data-testid~="selectable-text"], span.selectable-text)
+  ) {
+  overflow: clip !important;
+  overflow-clip-margin: var(--wab-text-clip, var(--wab-msg-halo, 9px));
+}
+
+/* Message text owns the outer blur, including links inside it. */
+html:not(.wab-off-messages-text)
+  :is([data-testid~="selectable-text"], span.selectable-text)
+  :is([data-testid~="selectable-text"], span.selectable-text, a[href]) {
+  filter: none !important;
+}
+
+/* Status text is its own content type and has its own switch. Media captions
+   in chats remain under Messages → Message text. */
+html:not(.wab-off-messages-status) [data-testid="status-caption-text"],
+html:not(.wab-off-messages-text) [data-testid~="image-caption"] {
+  filter: blur(calc(var(--wab-blur) * var(--wab-reveal)));
+  transition: filter var(--wab-duration) var(--wab-delay);
+}
+
+/* Pinned message subheader repeats the message text above the thread. */
+html:not(.wab-off-messages-text) [data-testid="conversation-subheader"] {
+  filter: blur(calc(var(--wab-blur) * var(--wab-reveal)));
+  transition: filter var(--wab-duration) var(--wab-delay);
+}
+
+/* "Your own messages" switched off: sent text stays readable. Relies on
+   WhatsApp marking sent rows with .message-out; if that ever changes the
+   switch simply has no effect and everything stays blurred (fails safe). */
+html.wab-off-messages-out:not(.wab-off-messages-text)
+  .message-out
+  :is([data-testid~="selectable-text"], span.selectable-text) {
+  filter: none !important;
+}

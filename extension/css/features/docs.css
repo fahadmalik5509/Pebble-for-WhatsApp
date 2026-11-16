@@ -1,0 +1,41 @@
+/* ============================================================
+   Documents.
+     docs_chat     document cards inside conversations
+     docs_gallery  the Docs tab in the info panel
+   ============================================================ */
+
+html:not(.wab-off-docs-chat) [data-testid="msg-container"] [data-testid*="document"] {
+  filter: blur(calc(var(--wab-blur) * var(--wab-reveal)));
+  transition: filter var(--wab-duration) var(--wab-delay);
+}
+
+/* The per-chat gallery is a msg-container clone: docs_chat already owns it.
+   The gallery switch still owns document thumbs outside message clones. */
+html:not(.wab-off-docs-gallery)
+  [data-testid="drawer-right"]
+  [data-testid="document-thumb"]:not([data-testid="media-gallery-drawer"] *) {
+  filter: blur(calc(var(--wab-blur) * var(--wab-reveal)));
+  transition: filter var(--wab-duration) var(--wab-delay);
+}
+
+/* WhatsApp owns document-card clipping. Do not force overflow: visible on
+   long file names; the blur stays inside the card. */
+
+/* Document thumbnails can contain further document-labelled text nodes. */
+html:not(.wab-off-docs-chat)
+  [data-testid="msg-container"]
+  [data-testid*="document"]
+  [data-testid*="document"] {
+  filter: none;
+}
+
+/* Media Hub > Docs (all chats). The row's first column is the download
+   button that wraps the file icon, name and size; hovering the row reveals
+   the whole thing. Action buttons in other columns stay crisp. */
+html:not(.wab-off-docs-gallery)
+  [data-testid="media-hub-list-row"]
+  [role="button"][title]:has([data-testid="ms-office-doc"])
+  > div {
+  filter: blur(calc(var(--wab-blur) * var(--wab-reveal)));
+  transition: filter var(--wab-duration) var(--wab-delay);
+}

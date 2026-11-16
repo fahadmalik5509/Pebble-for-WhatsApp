@@ -1,0 +1,369 @@
+<!doctype html>
+<html lang="en" data-theme="system">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Pebble for WhatsApp</title>
+    <link rel="stylesheet" href="../ui/tokens.css" />
+    <link rel="stylesheet" href="../ui/components.css" />
+    <link rel="stylesheet" href="popup.css" />
+  </head>
+  <body data-ready="false">
+    <div class="app">
+      <header id="hero" class="hero" data-state="blurred">
+        <div class="stage" aria-hidden="true">
+          <svg class="mascot" viewBox="0 0 96 88">
+            <defs>
+              <!-- Coral ramp mirrors the --accent pair (#f0603f light / #ff7a5c dark).
+                   SVG fills can't read light-dark(), so the values are pinned here. -->
+              <radialGradient id="pebbleBody" cx="0.36" cy="0.26" r="0.86">
+                <stop offset="0" stop-color="#ffd6c6" />
+                <stop offset="0.3" stop-color="#ffa184" />
+                <stop offset="0.72" stop-color="#ff6a62" />
+                <stop offset="1" stop-color="#d93f58" />
+              </radialGradient>
+              <clipPath id="pebbleClip">
+                <path d="M48 17c22 0 36 14 36 32S70 79 48 79 12 69 12 49 26 17 48 17Z" />
+              </clipPath>
+            </defs>
+            <ellipse class="m-shadow" cx="48" cy="83" rx="25" ry="3.5" />
+            <g class="m-body">
+              <path d="M48 17c22 0 36 14 36 32S70 79 48 79 12 69 12 49 26 17 48 17Z" fill="url(#pebbleBody)" />
+              <ellipse cx="34" cy="29" rx="9" ry="5" transform="rotate(-24 34 29)" fill="#fff" opacity="0.55" />
+              <g class="m-shut" fill="none" stroke="#4a1b1d" stroke-width="3.4" stroke-linecap="round">
+                <path d="M30.5 49q5.5 5.5 11 0" />
+                <path d="M54.5 49q5.5 5.5 11 0" />
+              </g>
+              <g class="m-open">
+                <ellipse cx="36" cy="50" rx="4.4" ry="5.6" fill="#3a1816" />
+                <ellipse cx="60" cy="50" rx="4.4" ry="5.6" fill="#3a1816" />
+                <circle cx="37.6" cy="47.8" r="1.5" fill="#fff" />
+                <circle cx="61.6" cy="47.8" r="1.5" fill="#fff" />
+              </g>
+              <path d="M44 61q4 3 8 0" fill="none" stroke="#4a1b1d" stroke-width="2.4" stroke-linecap="round" />
+              <ellipse cx="26.5" cy="59" rx="5" ry="3" fill="#ff3f6b" opacity="0.4" />
+              <ellipse cx="69.5" cy="59" rx="5" ry="3" fill="#ff3f6b" opacity="0.4" />
+              <!-- Covered: Pebble pulls a sleep mask over its eyes. -->
+              <g clip-path="url(#pebbleClip)">
+                <g class="m-mask">
+                  <path d="M0 40q48-9 96 0v17q-48 9-96 0Z" fill="#2a2230" />
+                  <path d="M0 41.5q48-9 96 0" fill="none" stroke="#fff" stroke-opacity="0.18" stroke-width="1.4" />
+                  <g fill="none" stroke="#ff9a84" stroke-width="2.2" stroke-linecap="round">
+                    <path d="M31 48.5q5 4.5 10 0" />
+                    <path d="M55 48.5q5 4.5 10 0" />
+                  </g>
+                </g>
+              </g>
+            </g>
+          </svg>
+          <span class="zz"><i>z</i><i>z</i></span>
+        </div>
+
+        <div class="hero-text">
+          <h1 class="brand-line"><span class="brand">Pebble for WhatsApp</span><span id="version" class="num ver"></span></h1>
+          <p id="powerLabel" class="state-label">Blurred</p>
+        </div>
+
+        <span class="switch big">
+          <input id="master" type="checkbox" aria-label="Turn Pebble on or off" />
+          <i></i>
+        </span>
+
+        <nav id="tabs" class="tabs seg" role="tablist" aria-label="Pebble tabs">
+          <span class="seg-thumb" aria-hidden="true"></span>
+        </nav>
+      </header>
+
+      <main class="content">
+        <!-- Blur -->
+        <section id="pane-blur" class="pane" tabindex="-1" role="tabpanel" aria-labelledby="tab-blur">
+          <div class="section">
+            <div class="section-head">
+              <h2 class="section-title">Strength</h2>
+            </div>
+            <div id="levelMount"></div>
+          </div>
+
+          <div class="section">
+            <div class="section-head">
+              <h2 class="section-title">What to blur</h2>
+              <span id="groupsCount" class="section-meta"></span>
+            </div>
+            <div id="groups" class="card"></div>
+          </div>
+
+          <div class="section">
+            <div class="section-head">
+              <h2 class="section-title">Videos</h2>
+            </div>
+            <div class="card">
+              <label class="row">
+                <span class="row-text">
+                  <span class="row-title">Pause blurred videos</span>
+                  <span class="row-desc">A video pauses while it’s blurred.</span>
+                </span>
+                <span id="pauseMount"></span>
+              </label>
+              <label class="row">
+                <span class="row-text">
+                  <span class="row-title">Resume when revealed</span>
+                  <span id="resumeDesc" class="row-desc"></span>
+                </span>
+                <span id="resumeMount"></span>
+              </label>
+            </div>
+          </div>
+        </section>
+
+        <!-- Peek -->
+        <section id="pane-peek" class="pane" tabindex="-1" role="tabpanel" aria-labelledby="tab-peek" hidden>
+          <div class="section">
+            <div class="section-head">
+              <h2 class="section-title">How to peek</h2>
+            </div>
+            <div id="modeMount"></div>
+            <p id="modeDesc" class="section-note"></p>
+          </div>
+
+          <div id="delayBlock" class="section">
+            <div class="section-head">
+              <h2 class="section-title">Hover delay</h2>
+            </div>
+            <div id="delayMount" class="stack-8"></div>
+            <p class="section-note">How long to wait before an item shows. Hiding is always instant.</p>
+          </div>
+
+          <div class="section">
+            <div class="section-head">
+              <h2 class="section-title">Blur again after</h2>
+            </div>
+            <div id="autoHideMount"></div>
+            <p id="autoHideNote" class="section-note"></p>
+          </div>
+        </section>
+
+        <!-- Cover -->
+        <section id="pane-cover" class="pane" tabindex="-1" role="tabpanel" aria-labelledby="tab-cover" hidden>
+          <div class="section">
+            <div class="section-head">
+              <h2 class="section-title">Triggers</h2>
+            </div>
+            <div class="card">
+              <div class="row stack">
+                <div class="row-text">
+                  <span class="row-title">After inactivity</span>
+                  <span class="row-desc">Cover when you stop using WhatsApp.</span>
+                </div>
+                <div id="idleMount"></div>
+              </div>
+              <label class="row">
+                <span class="row-text">
+                  <span class="row-title">When WhatsApp opens</span>
+                  <span class="row-desc">Start covered every time the page loads.</span>
+                </span>
+                <span id="onLoadMount"></span>
+              </label>
+              <label class="row">
+                <span class="row-text">
+                  <span class="row-title">Click to uncover</span>
+                  <span class="row-desc">While this is off, only the shortcut or the Cover button reveals the page.</span>
+                </span>
+                <span id="clickReleaseMount"></span>
+              </label>
+            </div>
+          </div>
+
+          <div class="section">
+            <div class="section-head">
+              <h2 class="section-title">Shortcut</h2>
+            </div>
+            <div class="card">
+              <div class="row">
+                <div class="row-text">
+                  <span class="row-title">Cover WhatsApp</span>
+                  <span class="row-desc">Works while WhatsApp is the active tab.</span>
+                </div>
+                <div id="coverShortcutMount"></div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Pebble -->
+        <section id="pane-pebble" class="pane" tabindex="-1" role="tabpanel" aria-labelledby="tab-pebble" hidden>
+          <div class="section">
+            <div class="section-head">
+              <h2 class="section-title">Floating Pebble</h2>
+            </div>
+            <div class="card">
+              <label class="row">
+                <span class="row-text">
+                  <span class="row-title">Show Pebble</span>
+                  <span class="row-desc">
+                    A small helper on WhatsApp. Click it to cover or uncover
+                    everything. Hold it to peek. Drag it to move it.
+                  </span>
+                </span>
+                <span id="pebbleMount"></span>
+              </label>
+            </div>
+          </div>
+
+          <div class="section">
+            <div class="section-head">
+              <h2 id="pebbleTimersLabel" class="section-title">Peek timers</h2>
+              <span id="pebbleTimersCount" class="section-meta"></span>
+            </div>
+            <div class="card" data-pebble-deps>
+              <div class="row stack">
+                <p id="pebbleTimersHint" class="row-desc">
+                  Hold Pebble, then slide onto a timer. Everything blurs again
+                  when it runs out.
+                </p>
+                <div class="timer-row">
+                  <div
+                    id="pebbleTimers"
+                    class="timers"
+                    role="group"
+                    aria-labelledby="pebbleTimersLabel"
+                    aria-describedby="pebbleTimersHint pebbleTimersError"
+                  ></div>
+                  <button id="pebbleTimerAdd" class="timer-add" type="button">Add</button>
+                </div>
+                <p id="pebbleTimersEmpty" class="row-desc" hidden>
+                  No timers. Holding Pebble peeks with no time limit.
+                </p>
+                <p id="pebbleTimersError" class="form-msg error" role="status" aria-live="polite"></p>
+              </div>
+            </div>
+          </div>
+
+          <div class="section">
+            <div class="section-head">
+              <h2 class="section-title">Position</h2>
+            </div>
+            <div class="card" data-pebble-deps>
+              <div class="row">
+                <div class="row-text">
+                  <span class="row-title">Reset position</span>
+                  <span class="row-desc">Pebble remembers where you leave it on this device.</span>
+                  <p id="pebblePositionMsg" class="form-msg" role="status" aria-live="polite"></p>
+                </div>
+                <button id="pebbleResetPosition" class="btn sm" type="button">Reset</button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Settings -->
+        <section id="pane-settings" class="pane" tabindex="-1" role="tabpanel" aria-labelledby="tab-settings" hidden>
+          <div class="section">
+            <div class="section-head">
+              <h2 class="section-title">Appearance</h2>
+            </div>
+            <div class="card">
+              <div class="row">
+                <div class="row-text">
+                  <span class="row-title">Theme</span>
+                </div>
+                <div id="themeMount"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="section">
+            <div class="section-head">
+              <h2 class="section-title">Shortcut</h2>
+            </div>
+            <div class="card">
+              <div class="row">
+                <div class="row-text">
+                  <span class="row-title">Turn Pebble on or off</span>
+                  <span class="row-desc">Works while WhatsApp is the active tab.</span>
+                </div>
+                <div id="toggleMount"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="section">
+            <div class="section-head">
+              <h2 class="section-title">Backup</h2>
+            </div>
+            <div class="card">
+              <div class="row stack">
+                <div class="row-line">
+                  <div class="row-text">
+                    <span class="row-title">Export</span>
+                    <span class="row-desc">Copy all settings, or download a backup file.</span>
+                    <p id="exportMsg" class="form-msg" role="status" aria-live="polite"></p>
+                  </div>
+                  <div class="btn-row">
+                    <button id="exportCopy" class="btn sm" type="button"></button>
+                    <button id="exportFile" class="btn sm" type="button"></button>
+                  </div>
+                </div>
+              </div>
+              <div class="row stack">
+                <div class="row-line">
+                  <div class="row-text">
+                    <span class="row-title">Import</span>
+                    <span class="row-desc">Replaces your current settings.</span>
+                  </div>
+                  <div class="btn-row">
+                    <button id="importPaste" class="btn sm" type="button" aria-expanded="false" aria-controls="importBox"></button>
+                    <button id="importFile" class="btn sm" type="button"></button>
+                    <input id="importInput" type="file" accept="application/json,.json" hidden />
+                  </div>
+                </div>
+                <div id="importBox" class="import-box" hidden>
+                  <textarea
+                    id="importText"
+                    class="input code"
+                    rows="4"
+                    spellcheck="false"
+                    placeholder="Paste a Pebble backup here"
+                    aria-label="Pasted backup"
+                  ></textarea>
+                  <button id="importApply" class="btn sm primary" type="button">Import</button>
+                </div>
+                <p id="importMsg" class="form-msg" role="status" aria-live="polite"></p>
+              </div>
+            </div>
+          </div>
+
+          <div class="section">
+            <div class="section-head">
+              <h2 class="section-title">Reset</h2>
+            </div>
+            <div class="card">
+              <div class="row">
+                <div class="row-text">
+                  <span class="row-title">Reset preferences</span>
+                  <span class="row-desc">Keeps the on/off switch and theme.</span>
+                  <p id="resetMsg" class="form-msg" role="status" aria-live="polite"></p>
+                </div>
+                <button id="reset" class="btn sm danger" type="button">Reset</button>
+              </div>
+            </div>
+          </div>
+        </section>
+      </main>
+
+      <footer class="bottom">
+        <span id="status" class="status toast" role="status" aria-live="polite"></span>
+        <button id="panic" class="cover-btn" type="button" aria-pressed="false">
+          <span id="panicIcon" class="cover-icon"></span>
+          <span id="panicLabel">Cover WhatsApp</span>
+          <span id="panicKeys" class="cover-keys" aria-hidden="true"></span>
+        </button>
+        <span id="credit" class="credit"></span>
+      </footer>
+    </div>
+    <script src="../shared.js"></script>
+    <script src="../ui/icons.js"></script>
+    <script src="../ui/store.js"></script>
+    <script src="../ui/controls.js"></script>
+    <script src="popup.js"></script>
+  </body>
+</html>

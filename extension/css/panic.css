@@ -1,0 +1,17 @@
+/* ============================================================
+   Pebble - whole-page cover (SW-injected, frozen path)
+   The one whole-page covered state. Never fades in
+   (transition: none — a fading cover leaks content).
+   Uses frosted-glass full-screen backdrop blur.
+   ============================================================ */
+
+html:not(.wab-off)::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 2147483647;
+  backdrop-filter: blur(var(--wab-blur, 8px));
+  pointer-events: auto;
+  opacity: 1 !important;
+  transition: none !important;
+}

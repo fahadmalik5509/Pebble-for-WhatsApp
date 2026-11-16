@@ -1,0 +1,60 @@
+/* ============================================================
+   Typing (composer & search bars), blur-based. Movement-gated hover
+   reveals; moving the pointer away re-blurs.
+     html.wab-off-input-chat    lifts message composer blur
+     html.wab-off-input-search  lifts search input blur
+     html.wab-peek              lifts all blur during a Pebble reveal
+   ============================================================ */
+
+/* Chat conversation composer (blurs typed text; placeholder remains sharp) */
+html:not(.wab-off-input-chat)
+  #main
+  div[data-testid="conversation-compose-box-input"],
+html:not(.wab-off-input-chat)
+  footer
+  div[data-testid="conversation-compose-box-input"],
+html:not(.wab-off-input-chat)
+  #main
+  footer
+  [contenteditable="true"] {
+  filter: blur(calc(var(--wab-blur) * var(--wab-reveal)));
+  transition: filter var(--wab-duration) var(--wab-delay);
+}
+
+/* Sidebar search input & dialog/drawer search inputs:
+   Strictly blur only when user has typed text (:not(:placeholder-shown)).
+   When empty, the placeholder ("Search or start a new chat") remains sharp and visible. */
+html:not(.wab-off-input-search)
+  #side
+  [data-testid="chat-list-search-container"]
+  input:not(:placeholder-shown),
+html:not(.wab-off-input-search)
+  #side
+  input[role="textbox"]:not(:placeholder-shown),
+html:not(.wab-off-input-search)
+  #side
+  [data-testid="chat-list-search-container"]
+  [contenteditable="true"]:not(:empty),
+html:not(.wab-off-input-search)
+  [data-testid="drawer-right"]
+  input:not(:placeholder-shown),
+html:not(.wab-off-input-search)
+  div[role="dialog"]
+  input:not(:placeholder-shown) {
+  filter: blur(calc(var(--wab-blur) * var(--wab-reveal)));
+  transition: filter var(--wab-duration) var(--wab-delay);
+}
+
+/* Other places where you type private text: media captions, poll
+   question/options and the status reply box. Same reveal contract as the
+   chat composer; the placeholder layers stay outside these fields. */
+html:not(.wab-off-input-chat) [data-testid="media-caption-input-container"],
+html:not(.wab-off-input-chat) [data-testid="edit-message-composer"],
+html:not(.wab-off-input-chat) [data-testid^="poll-question-input"],
+html:not(.wab-off-input-chat) [data-testid^="poll-option-input"],
+html:not(.wab-off-input-chat)
+  [data-testid="status-player-uie"]
+  [contenteditable="true"] {
+  filter: blur(calc(var(--wab-blur) * var(--wab-reveal)));
+  transition: filter var(--wab-duration) var(--wab-delay);
+}
