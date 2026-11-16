@@ -1,0 +1,82 @@
+/* ============================================================
+   Profile photos (avatars). Default OFF.
+   The "You" entry (self-profile) is exempt on every surface.
+     pics_list    chat list rows and dialogs (forward, reactions, ...)
+     pics_header  the open conversation's header
+     pics_info    info panel: profile photo and participants
+   ============================================================ */
+
+/* Chat list rows and dialog participants (excluding the "You" row) */
+html:not(.wab-off-pics-list) #pane-side div[role="row"]:not(:has([data-testid="message-yourself-row"])) img[alt]:not([data-testid]):not([data-plain-text]):not([class*="emoji"]),
+html:not(.wab-off-pics-list) div[role="dialog"] [role="listitem"]:not(:has([data-testid="message-yourself-row"])) img[alt]:not([data-testid]):not([data-plain-text]):not([class*="emoji"]) {
+  filter: blur(calc(var(--wab-blur) * var(--wab-reveal)));
+  transition: filter var(--wab-duration) var(--wab-delay);
+}
+
+/* Open chat header avatar (excluding when chatting with "You") */
+html:not(.wab-off-pics-header) #main header:not(:has([data-testid="you-label"])):not(:has([data-testid*="yourself"])):not(:has(span[title*="(You)"])) :is(img[alt]:not([data-testid]):not([data-plain-text]):not([class*="emoji"]), img[src*="whatsapp.net"], img[src^="blob:"]) {
+  filter: blur(calc(var(--wab-blur) * var(--wab-reveal)));
+  transition: filter var(--wab-duration) var(--wab-delay);
+}
+
+/* Info panel: header photo (SVG) and participant avatars */
+html:not(.wab-off-pics-info) [data-testid="drawer-right"] svg:has(image),
+html:not(.wab-off-pics-info) [data-testid="drawer-right"] [data-testid="contact-info-header"] [style*="background-image"],
+html:not(.wab-off-pics-info) [data-testid="drawer-right"] img:not([data-testid="link-gallery-msg"] img):not([data-testid="document-thumb"] img):not([data-testid="image-thumb"] img):not([data-testid="media-canvas"] img):not([data-testid~="media-canvas-img"]):not([data-plain-text]):not([class*="emoji"]) {
+  filter: blur(calc(var(--wab-blur) * var(--wab-reveal)));
+  transition: filter var(--wab-duration) var(--wab-delay);
+}
+
+/* WhatsApp already renders avatars circular; no border-radius override is
+   needed. The old duplicate selector block was dead (literal "\\n" tokens). */
+
+[data-testid="drawer-right"]:has(
+    [data-testid~="contact-info-subtitle"] + [data-testid="you-label"]
+  )
+  svg:has(image) {
+  filter: none !important;
+}
+
+/* ---------- Fallback avatars ----------
+   Contacts without a photo render an SVG letter avatar
+   (<svg><foreignObject><div>Z</div></foreignObject></svg>). Real photos can
+   also be rendered as <svg><image>. Blur the SVG avatar, never the plain
+   status ring or generic icon SVGs. */
+html:not(.wab-off-pics-list)
+  #pane-side
+  div[role="row"]:not(:has([data-testid="message-yourself-row"]))
+  :is(svg:has(foreignObject), svg:has(image)),
+html:not(.wab-off-pics-list)
+  div[role="dialog"]
+  [role="listitem"]:not(:has([data-testid="message-yourself-row"]))
+  :is(svg:has(foreignObject), svg:has(image)) {
+  filter: blur(calc(var(--wab-blur) * var(--wab-reveal)));
+  transition: filter var(--wab-duration) var(--wab-delay);
+}
+
+html:not(.wab-off-pics-header)
+  #main
+  header:not(:has([data-testid="you-label"])):not(:has([data-testid*="yourself"])):not(:has(span[title*="(You)"]))
+  :is(svg:has(foreignObject), svg:has(image)) {
+  filter: blur(calc(var(--wab-blur) * var(--wab-reveal)));
+  transition: filter var(--wab-duration) var(--wab-delay);
+}
+
+/* Status and media-viewer headers use a 40px avatar wrapper. */
+html:not(.wab-off-pics-header)
+  [data-testid="status-player-uie"]
+  [style*="--x-height: 40px"][style*="--x-width: 40px"]
+  :is(img, svg:has(image), svg:has(foreignObject)) {
+  filter: blur(calc(var(--wab-blur) * var(--wab-reveal)));
+  transition: filter var(--wab-duration) var(--wab-delay);
+}
+
+/* Media viewer header reuses the chat-row header; its contact photo is a
+   Profile photos → Chat header surface, not part of the media itself. */
+html:not(.wab-off-pics-header)
+  [data-testid="media-viewer-modal"]
+  [data-testid="cell-frame-container"]
+  :is(img, svg:has(image), [style*="background-image"][style*="url("]) {
+  filter: blur(calc(var(--wab-blur) * var(--wab-reveal)));
+  transition: filter var(--wab-duration) var(--wab-delay);
+}

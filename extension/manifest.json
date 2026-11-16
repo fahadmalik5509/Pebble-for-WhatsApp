@@ -1,0 +1,58 @@
+{
+  "manifest_version": 3,
+  "name": "Pebble for WhatsApp",
+  "short_name": "Pebble",
+  "version": "0.4.5",
+  "description": "Blur private content on WhatsApp Web. Peek at one item when you need it, or cover the whole page with one shortcut.",
+  "icons": {
+    "16": "assets/icon16.png",
+    "32": "assets/icon32.png",
+    "48": "assets/icon48.png",
+    "128": "assets/icon128.png"
+  },
+  "permissions": [
+    "storage",
+    "scripting"
+  ],
+  "host_permissions": [
+    "https://web.whatsapp.com/*"
+  ],
+  "background": {
+    "service_worker": "sw.js"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "https://web.whatsapp.com/*"
+      ],
+      "css": [
+        "css/base.css",
+        "css/features/messages.css",
+        "css/features/previews.css",
+        "css/features/names.css",
+        "css/features/pics.css",
+        "css/features/media.css",
+        "css/features/links.css",
+        "css/features/docs.css",
+        "css/features/input.css"
+      ],
+      "js": [
+        "shared.js",
+        "content/pebble.js",
+        "content/content.js"
+      ],
+      "run_at": "document_start"
+    }
+  ],
+  "action": {
+    "default_popup": "popup/popup.html",
+    "default_title": "Pebble for WhatsApp",
+    "default_icon": {
+      "16": "assets/icon16.png",
+      "32": "assets/icon32.png",
+      "48": "assets/icon48.png"
+    }
+  },
+  "minimum_chrome_version": "123",
+  "homepage_url": "https://github.com/fahadmalik5509/Pebble-for-WhatsApp"
+}

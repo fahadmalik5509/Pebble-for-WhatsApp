@@ -1,0 +1,50 @@
+/* ============================================================
+   Links. Leaf-targeted so a link card keeps its crisp geometry.
+     links_previews  title, address and summary of link cards in chat
+     links_inline    links typed inside messages
+     links_gallery   the Links tab in the info panel
+   ============================================================ */
+
+html:not(.wab-off-links-previews) :is([data-testid="link-preview-container"], [data-testid="link-preview-no-thumb"]) :is([data-testid="link-preview-title"], [data-testid="url-element"], [data-testid="link-description"]) {
+  filter: blur(calc(var(--wab-blur) * var(--wab-reveal)));
+  transition: filter var(--wab-duration) var(--wab-delay);
+}
+
+html:not(.wab-off-links-inline) [data-testid="msg-container"] a[href] {
+  filter: blur(calc(var(--wab-blur) * var(--wab-reveal)));
+  transition: filter var(--wab-duration) var(--wab-delay);
+}
+
+/* The per-chat gallery is a message clone: links_previews already owns it.
+   The gallery switch still owns link cards outside message clones. */
+html:not(.wab-off-links-gallery)
+  [data-testid="drawer-right"]
+  [data-testid="link-gallery-msg"]:not([data-testid="media-gallery-drawer"] *)
+  > div:last-child {
+  filter: blur(calc(var(--wab-blur) * var(--wab-reveal)));
+  transition: filter var(--wab-duration) var(--wab-delay);
+}
+
+/* WhatsApp owns card clipping and truncation. Do not force overflow: visible
+   on long link titles/URLs; the blur stays inside the card. */
+
+/* The preview card's thumbnail is part of the link preview, not a chat photo.
+   Blur it with the same category, without double-blurring an image-thumb. */
+html:not(.wab-off-links-previews)
+  [data-testid="link-preview-container"]
+  :is(img, canvas, [style*="background-image"][style*="url("]:not(:has(*))):not(
+    :is([data-testid~="image-thumb"], [data-testid~="image-placeholder"]) *
+  ) {
+  filter: blur(calc(var(--wab-blur) * var(--wab-reveal)));
+  transition: filter var(--wab-duration) var(--wab-delay);
+}
+
+/* Media Hub > Links (all chats). Link URL/title/domain live in the
+   link-description block. The caption column is owned by the previews /
+   message rules, and action buttons stay crisp. */
+html:not(.wab-off-links-gallery)
+  [data-testid="media-hub-list-row"]
+  [data-testid="link-description"] {
+  filter: blur(calc(var(--wab-blur) * var(--wab-reveal)));
+  transition: filter var(--wab-duration) var(--wab-delay);
+}

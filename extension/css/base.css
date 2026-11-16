@@ -1,0 +1,59 @@
+/* ============================================================
+   Pebble - shared blur styles
+   Universal reveal engine, variables, and common reset.
+   ============================================================ */
+
+/* CSS Variables & Timing Engine */
+:root {
+  /* Reveal multiplier: 1 = fully blurred, 0 = revealed */
+  --wab-reveal: 1;
+
+  /* Asymmetric transition timing: fast conceal, smooth reveal */
+  --wab-duration: 0.05s;
+  --wab-delay: 0s;
+
+  /* One shared blur strength for every surface and the page cover. */
+  --wab-blur: 8px;
+}
+
+/* Master Kill Switch: when html.wab-off, lift all feature effects */
+html.wab-off *,
+html.wab-off {
+  --wab-text-clip: 0px !important;
+  --wab-reveal: 0 !important;
+  --wab-duration: 0s !important;
+  --wab-delay: 0s !important;
+}
+
+
+
+/* ---------- Pebble reveal ----------
+   When Pebble reveals content, html.wab-peek
+   sets --wab-reveal to 0 globally, forcing all blur calculations
+   to (strength * 0) = 0px instantly!
+   Also sets --wab-duration to 0s for zero latency. */
+html.wab-peek,
+html.wab-peek * {
+  --wab-text-clip: 0px !important;
+  --wab-reveal: 0 !important;
+  --wab-duration: 0s !important;
+  --wab-delay: 0s !important;
+}
+
+/* ---------- Shared reveal timing pattern --------------------------
+   FEATURE RULES (in features/*.css) all use:
+     filter: blur(calc(var(--wab-blur) * var(--wab-reveal, 1)));
+     transition: filter var(--wab-duration, 0.05s) var(--wab-delay, 0s);
+   Asymmetric BY DESIGN (CSS Transitions reads timing from the
+   after-change style): the base state re-conceals fast (0s delay,
+   0.05s duration); the reveal state carries the user's delay via
+   inline vars set by JS. A symmetric rule leaks ~250ms of readable
+   content after pointer exit. No-delay mode = JS writes delay 0s /
+   duration 0.04s. prefers-reduced-motion shortens reveal fades. */
+
+@media (prefers-reduced-motion: reduce) {
+  /* conceal stays instant; reveal fades become near-instant */
+  :root {
+    --wab-duration: 0.01s;
+  }
+}

@@ -1,0 +1,102 @@
+/* ============================================================
+   Names (contact and group names). Default OFF.
+   The "You" entry (self-name) is exempt on every surface.
+     names_list    chat list rows and dialogs (forward, reactions, ...)
+     names_header  the open conversation's header
+     names_info    info panel: name, number, about
+   Sender names inside group bubbles belong to Messages > Sender names.
+   ============================================================ */
+
+/* Chat header (open conversation), exempt when chatting with "You" */
+html:not(.wab-off-names-header) #main header:not(:has([data-testid="you-label"])):not(:has([data-testid*="yourself"])):not(:has(span[title*="(You)"])) [dir="auto"]:not(span[title*=":"]) {
+  filter: blur(calc(var(--wab-blur) * var(--wab-reveal)));
+  transition: filter var(--wab-duration) var(--wab-delay);
+}
+
+/* Contact/group names: universal cell-frame-title across all rows
+   (exempting the "You" row), dialog fallbacks, and rows without a named
+   title hook (structural text position). */
+html:not(.wab-off-names-list) div[role="row"]:not(:has([data-testid="message-yourself-row"])) [data-testid="cell-frame-title"],
+html:not(.wab-off-names-list) [data-testid="cell-frame-container"]:not([data-testid="message-yourself-row"]):not(:has([data-testid="message-yourself-row"])) [data-testid="cell-frame-title"],
+html:not(.wab-off-names-list) div[role="dialog"] [role="listitem"]:not(:has([data-testid="message-yourself-row"])) [data-testid="cell-frame-title"],
+html:not(.wab-off-names-list) div[role="dialog"] [role="listitem"]:not(:has([data-testid="message-yourself-row"])) span[title]:not([data-testid="cell-frame-title"] *),
+html:not(.wab-off-names-list) div[role="dialog"] [role="row"]:not(:has([data-testid="message-yourself-row"])) span[title]:not([data-testid="cell-frame-title"] *),
+html:not(.wab-off-names-list) #pane-side div[role="row"] > div > div[role="gridcell"] > div:last-child > div:first-child span:not([data-testid="cell-frame-title"] *) {
+  filter: blur(calc(var(--wab-blur) * var(--wab-reveal)));
+  transition: filter var(--wab-duration) var(--wab-delay);
+}
+
+/* Contact/group info drawer (right panel): name, phone number, about text */
+html:not(.wab-off-names-info) [data-testid="drawer-right"] [data-testid~="contact-info-subtitle"],
+html:not(.wab-off-names-info) [data-testid="chat-info-drawer"] span.selectable-text,
+html:not(.wab-off-names-info) [data-testid="drawer-right"] [data-testid="section-about"] span.selectable-text {
+  filter: blur(calc(var(--wab-blur) * var(--wab-reveal)));
+  transition: filter var(--wab-duration) var(--wab-delay);
+}
+
+/* WhatsApp owns text truncation. Do not force overflow: visible here:
+   long contact names and snippets must keep their native ellipsis and stay
+   inside the row. The blur filter clips at the row instead of expanding it. */
+
+/* The self marker can wrap a row as well as sit inside it. Only identity
+   text is exempt; its message preview must keep its own protection. */
+[data-testid="message-yourself-row"] [data-testid="cell-frame-title"],
+[data-testid="message-yourself-row"] [data-testid="cell-frame-title"] * {
+  filter: none !important;
+}
+
+/* Status list names use the same cell-frame-title hook but the rows live in
+   the status drawer, outside #pane-side and the chat-row selectors above. */
+html:not(.wab-off-names-list)
+  [data-testid="status-row-cell"]:not(:has([data-testid="my-status"]))
+  [data-testid="cell-frame-title"],
+html:not(.wab-off-names-list)
+  [data-testid="status-row-cell"]:not(:has([data-testid="my-status"]))
+  [data-testid="cell-frame-title"] * {
+  filter: blur(calc(var(--wab-blur) * var(--wab-reveal)));
+  transition: filter var(--wab-duration) var(--wab-delay);
+}
+
+/* Business/broadcast header subtitle ("click here for contact info"). */
+html:not(.wab-off-names-header) #main header :is([data-testid="selectable-text"], span.selectable-text) {
+  filter: blur(calc(var(--wab-blur) * var(--wab-reveal)));
+  transition: filter var(--wab-duration) var(--wab-delay);
+}
+
+/* Status viewer header is its own header surface. */
+html:not(.wab-off-names-header)
+  [data-testid="status-player-uie"]
+  [data-testid="status-player-contact-name"]
+  span[dir="auto"] {
+  filter: blur(calc(var(--wab-blur) * var(--wab-reveal)));
+  transition: filter var(--wab-duration) var(--wab-delay);
+}
+
+/* The contact name is repeated inside the Block / Report rows. Keep the
+   action verb crisp and blur only the identity span. */
+html:not(.wab-off-names-info) [data-testid="li-block"] span[dir="auto"],
+html:not(.wab-off-names-info) [data-testid="li-report-spam"] span[dir="auto"] {
+  filter: blur(calc(var(--wab-blur) * var(--wab-reveal)));
+  transition: filter var(--wab-duration) var(--wab-delay);
+}
+
+/* Sender identity under Media Hub tiles (name or phone number). */
+html:not(.wab-off-names-list)
+  [data-testid="media-hub-modal"]
+  [data-testid="media-canvas"]
+  span[dir="auto"] {
+  filter: blur(calc(var(--wab-blur) * var(--wab-reveal)));
+  transition: filter var(--wab-duration) var(--wab-delay);
+}
+
+/* Archived is a navigation label, not a contact name. */
+html:not(.wab-off-names-list) [data-testid="chatlist-panel-archived-button"] [data-testid="cell-frame-title"],
+html:not(.wab-off-names-list) [data-testid="chatlist-panel-archived-button"] [data-testid="cell-frame-title"] * {
+  filter: none !important;
+}
+
+/* The drawer renders its self label as a sibling of the profile name. */
+[data-testid="drawer-right"]
+  [data-testid~="contact-info-subtitle"]:has(+ [data-testid="you-label"]) {
+  filter: none !important;
+}

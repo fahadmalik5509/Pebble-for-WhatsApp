@@ -1,0 +1,385 @@
+/* Controls built by ui/controls.js. Layout lives in popup.css. */
+
+/* ---------- Switch ---------- */
+.switch {
+  position: relative;
+  display: inline-block;
+  flex: none;
+  width: 40px;
+  height: 24px;
+}
+.switch input {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+.switch i {
+  position: absolute;
+  inset: 0;
+  border-radius: 99px;
+  background: var(--track);
+  box-shadow:
+    inset 0 1px 2px rgb(0 0 0 / 0.12),
+    inset 0 0 0 0.5px var(--line-strong);
+  transition: background 0.2s var(--ease);
+}
+.switch i::after {
+  content: "";
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow:
+    0 1px 3px rgb(0 0 0 / 0.25),
+    inset 0 0 0 1px rgb(29 12 7 / 0.28);
+  transition:
+    transform 0.28s var(--spring),
+    width 0.18s var(--ease);
+}
+.switch input:checked + i {
+  background: var(--accent);
+}
+.switch input:checked + i::after {
+  transform: translateX(16px);
+}
+.switch input:active + i::after {
+  width: 21px;
+}
+.switch input:checked:active + i::after {
+  transform: translateX(13px);
+}
+.switch input:focus-visible + i {
+  outline: 2px solid var(--accent-text);
+  outline-offset: 2px;
+}
+.switch:has(input:disabled) {
+  opacity: 0.4;
+}
+.switch input:disabled {
+  cursor: not-allowed;
+}
+.switch.sm {
+  width: 32px;
+  height: 20px;
+}
+.switch.sm i::after {
+  width: 14px;
+  height: 14px;
+}
+.switch.sm input:checked + i::after {
+  transform: translateX(12px);
+}
+.switch.sm input:active + i::after {
+  width: 17px;
+}
+.switch.sm input:checked:active + i::after {
+  transform: translateX(9px);
+}
+
+/* ---------- Segmented control ---------- */
+.seg {
+  position: relative;
+  isolation: isolate;
+  display: grid;
+  grid-template-columns: repeat(var(--n, 2), minmax(0, 1fr));
+  padding: 3px;
+  border-radius: var(--r-md);
+  background: var(--well);
+  box-shadow: inset 0 0 0 0.5px var(--line);
+}
+.seg-thumb {
+  position: absolute;
+  z-index: -1;
+  top: 3px;
+  bottom: 3px;
+  left: 3px;
+  width: calc((100% - 6px) / var(--n, 2));
+  border-radius: var(--r-sm);
+  background: var(--raised);
+  box-shadow: var(--shadow-card);
+  transform: translateX(calc(var(--i, 0) * 100%));
+  transition: transform 0.32s var(--spring);
+}
+.seg-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-1);
+  min-width: 0;
+  height: 30px;
+  padding: 0 8px;
+  border: 0;
+  border-radius: var(--r-sm);
+  background: none;
+  color: var(--ink-2);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-semibold);
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+  transition: color 0.15s;
+}
+.seg-btn .ic {
+  font-size: var(--text-md);
+}
+.seg-btn:hover {
+  color: var(--ink);
+}
+.seg-btn[aria-checked="true"],
+.seg-btn[aria-selected="true"] {
+  color: var(--accent-text);
+}
+.seg-btn[aria-checked="true"] .ic,
+.seg-btn[aria-selected="true"] .ic {
+  color: var(--accent-text);
+}
+.seg-btn:focus-visible {
+  outline-offset: -2px;
+}
+.seg.sm .seg-btn {
+  height: 26px;
+  padding: 0 10px;
+}
+
+/* ---------- Slider ---------- */
+.slider input[type="range"] {
+  --p: 0%;
+  display: block;
+  width: 100%;
+  height: 22px;
+  margin: 0;
+  background: transparent;
+  cursor: pointer;
+  appearance: none;
+}
+.slider input::-webkit-slider-runnable-track {
+  height: 6px;
+  border-radius: 99px;
+  background: linear-gradient(
+    to right,
+    var(--accent) var(--p),
+    var(--well) var(--p)
+  );
+}
+.slider input::-webkit-slider-thumb {
+  width: 20px;
+  height: 20px;
+  margin-top: -7px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow:
+    0 1px 3px rgb(0 0 0 / 0.3),
+    inset 0 0 0 1px var(--line-strong);
+  transition:
+    transform 0.15s var(--spring),
+    box-shadow 0.15s;
+  appearance: none;
+}
+.slider input:active::-webkit-slider-thumb {
+  transform: scale(1.12);
+}
+.slider input:focus-visible {
+  outline: none;
+}
+.slider input:focus-visible::-webkit-slider-thumb {
+  box-shadow:
+    0 1px 3px rgb(0 0 0 / 0.3),
+    0 0 0 5px var(--accent-ring);
+}
+
+/* ---------- Keys ---------- */
+.keys {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+}
+kbd.key {
+  display: inline-grid;
+  place-items: center;
+  min-width: 22px;
+  height: 22px;
+  padding: 0 var(--space-1-5);
+  border: 1px solid var(--line-strong);
+  border-bottom-width: 2px;
+  border-radius: var(--r-xs);
+  background: var(--keycap);
+  color: var(--ink);
+  font: 600 var(--text-2xs)/1 var(--font-ui);
+}
+kbd.key.ghost {
+  border-style: dashed;
+  background: none;
+  color: var(--ink-3);
+}
+
+/* ---------- Buttons ---------- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-1-5);
+  height: 32px;
+  padding: 0 12px;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--r-sm);
+  background: var(--surface);
+  font-weight: var(--weight-medium);
+  white-space: nowrap;
+  transition:
+    background 0.15s,
+    border-color 0.15s,
+    color 0.15s,
+    transform 0.1s;
+}
+.btn:hover:not(:disabled) {
+  background: var(--surface-hover);
+  border-color: var(--ink-3);
+}
+.btn:active:not(:disabled) {
+  transform: scale(0.97);
+}
+.btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+.btn .ic {
+  font-size: var(--text-md);
+}
+.btn.primary {
+  border-color: transparent;
+  background: var(--ink);
+  color: var(--bg);
+}
+.btn.primary:hover:not(:disabled) {
+  border-color: transparent;
+  background: color-mix(in srgb, var(--ink) 86%, var(--bg));
+}
+.btn.danger {
+  color: var(--danger);
+}
+.btn.danger:hover:not(:disabled) {
+  border-color: var(--danger);
+  background: var(--danger-soft);
+}
+.btn.danger.armed {
+  border-color: transparent;
+  background: var(--danger);
+  color: var(--danger-ink);
+}
+.btn.ghost {
+  padding: 0 8px;
+  border-color: transparent;
+  background: none;
+  color: var(--accent-text);
+}
+.btn.ghost:hover:not(:disabled) {
+  border-color: transparent;
+  background: var(--accent-soft);
+}
+.btn.sm {
+  height: 28px;
+  padding: 0 10px;
+  border-radius: var(--r-sm);
+  font-size: var(--text-sm);
+}
+
+/* ---------- Shortcut recorder ---------- */
+.shortcut {
+  display: grid;
+  justify-items: end;
+  gap: var(--space-1);
+}
+.shortcut-line {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+.shortcut-field {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  height: 32px;
+  padding: 0 6px 0 5px;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--r-sm);
+  background: var(--surface);
+  transition:
+    border-color 0.15s,
+    box-shadow 0.15s;
+}
+.shortcut-field:hover {
+  border-color: var(--ink-3);
+}
+.shortcut[data-state="recording"] .shortcut-field {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-soft);
+}
+.shortcut-field > span:first-child {
+  display: inline-flex;
+  gap: 3px;
+}
+.shortcut-hint {
+  color: var(--ink-3);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-medium);
+}
+.shortcut[data-state="recording"] .shortcut-hint {
+  color: var(--accent-text);
+}
+.shortcut[data-empty="true"] .shortcut-field {
+  padding: 0 11px;
+  border-style: dashed;
+}
+.shortcut[data-empty="true"] .shortcut-hint {
+  color: var(--accent-text);
+  font-size: var(--text-sm);
+}
+.shortcut-msg {
+  max-width: 230px;
+  color: var(--ink-3);
+  font-size: var(--text-sm);
+  text-align: right;
+}
+.shortcut-msg:empty {
+  display: none;
+}
+.shortcut-msg.error,
+.form-msg.error {
+  color: var(--danger);
+}
+
+/* ---------- Form message ---------- */
+.form-msg {
+  color: var(--ink-2);
+  font-size: var(--text-sm);
+}
+.form-msg:empty {
+  display: none;
+}
+.form-msg.ok {
+  color: var(--accent-text);
+}
+
+/* ---------- Status toast ---------- */
+.status {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1-5);
+  color: var(--ink-2);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-medium);
+}
+.status .ic {
+  color: var(--accent);
+  font-size: var(--text-base);
+}
+.status.error {
+  color: var(--danger);
+}

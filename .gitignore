@@ -1,0 +1,12 @@
+# Dependencies
+node_modules/
+
+# Local tool output
+*.log
+pebble-wa-shots/
+pebble-wa-profile/
+*.zip
+
+# OS files
+.DS_Store
+Thumbs.db
